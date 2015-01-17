@@ -13,7 +13,7 @@ var mc *memcache.Client
 var lc *cache.Cache
 
 var cacher CacheManager = CacheManager{
-	Hosts:  os.Getenv("MEMCACHE_HOSTS"),
+	Hosts:  os.Getenv("MEMCACHED"),
 	Engine: "mc",
 }
 
