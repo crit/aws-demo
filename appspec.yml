@@ -3,6 +3,8 @@ os: linux
 files:
     - source: bin/linux/
       destination: /home/ec2-user/awsdemo
+    - source: templates
+      destination: /home/ec2-user/awsdemo/templates
 permissions:
     - object: /home/ec2-user/awsdemo
       mode: 775

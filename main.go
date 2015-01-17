@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+func init() {
+	RestoreAssets(".", "templates")
+}
+
 func main() {
 	m := martini.Classic()
 
