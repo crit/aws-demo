@@ -8,9 +8,9 @@ import (
 )
 
 type Person struct {
-	Id    int       `json:"id"`
+	Id    int       `json:"-"`
 	Name  string    `json:"name"`
-	Email string    `json:"email"`
+	Email string    `json:"-"`
 	Date  time.Time `json:"date"`
 }
 

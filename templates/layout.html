@@ -36,5 +36,95 @@
 		<script src="//code.jquery.com/jquery.js"></script>
 		<!-- Bootstrap JavaScript -->
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<script>
+			(function($){
+				var timer = {
+					init: 0,
+					duration: 0,
+					start: function() {
+						this.init = new Date().getTime();
+					},
+					stop: function() {
+						this.duration = new Date().getTime() - this.init;
+					}
+				};
+
+				var restartButton = $("<button>").addClass("btn btn-primary").text("restart").on("click", function(e){
+					current();
+					$(this).parent().removeClass("bg-danger");
+					$(this).remove();
+				});
+
+				var emptyList = $("<li>").addClass("list-group-item").text("You will be the first!");
+
+				function current() {
+					timer.start()
+
+					$.ajax({
+						url: "/api/people",
+						dataType: "json"
+					}).complete(list);
+				}
+
+				function list(res) {
+					var data, content = [];
+
+					timer.stop();
+
+					if (res.status != 200) {
+						$("#timer").text("-").parent().parent().addClass("bg-danger").append(restartButton);
+						return
+					}
+
+					data = res.responseJSON;
+
+					if (!data || !data.hasOwnProperty("people")) {
+						$("#timer").text("-").parent().parent().addClass("bg-danger").append(res.responseText);
+						return
+					}
+
+					$.each(data.people, function(i, item){
+						var date = new Date(item.date)
+						var formatted = $("<span>").addClass("pull-right small").text(date.toLocaleString());
+						var el = $("<li>").addClass('list-group-item').html([item.name, formatted]);
+						content.push(el)
+					});
+
+					if (content.length > 0) $("#stage").html(content);
+					if (content.length == 0) $("#stage").html(emptyList);
+					$("#timer").text(timer.duration);
+
+					setTimeout(current, 2000);
+				}
+
+				function submit(e) {
+					e.preventDefault();
+					$("#error").addClass("hidden")
+
+					$form = $(this)
+
+					$.ajax({
+						url: "/api/people",
+						method: "put",
+						data: $form.serialize()
+					}).complete(function(res){
+						$form[0].reset();
+						$("input:first").focus();
+						if (res.status != 201) $("#error-msg").text(res.responseText).parent().removeClass("hidden");
+					});
+				}
+
+				// on dom load bind stuff and start the loop
+				$(function(){
+					$("form").on("submit", submit);
+					$("#error button").on("click", function(){
+						$("#error").addClass("hidden");
+					});
+
+					$("input:first").focus();
+					current();
+				});
+			}(jQuery));
+		</script>
 	</body>
 </html>
