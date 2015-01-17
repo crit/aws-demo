@@ -1,0 +1,47 @@
+#!/bin/sh
+# 
+# ************************************************* 
+# chkconfig: 	2345 99 99
+# description: 	AWSDemo
+# *************************************************
+# processname: 	awsdemo
+# 
+# Installation:
+# 1. save as /etc/rc.d/init.d/awsdemo
+# 2. chmod a+x /etc/rc.d/init.d/awsdemo
+# 3. /sbin/chkconfig --level 2345 awsdemo on
+
+. /root/.bashrc
+
+start(){
+	/usr/bin/supervisord -c /etc/supervisord.conf &> /dev/null
+	/usr/bin/supervisorctl start awsdemo
+}
+
+stop() {
+	/usr/bin/supervisorctl stop awsdemo
+}
+
+status() {
+	/usr/bin/supervisorctl status awsdemo
+}
+
+case "$1" in
+	start)
+		start
+	;;
+	restart)
+		stop
+		sleep 1
+		start
+	;;
+	stop)
+		stop
+	;;
+	status)
+		status
+	;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart}"
+		exit 2
+esac
