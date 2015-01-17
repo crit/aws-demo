@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+    - source: bin/linux/
+      destination: /home/ec2-user/awsdemo
+permissions:
+    - object: /home/ec2-user/awsdemo
+      mode: 775
+    - object: scripts/supervisord.sh
+      mode: 775
+    - object: scripts/stop.sh
+      mode: 775
+    - object: scripts/start.sh
+      mode: 775
+hooks:
+    BeforeInstall:
+        - location: scripts/supervisord.sh
+          runas: root
+        - location: scripts/stop.sh
+          runas: root
+    ApplicationStart:
+        - location: scripts/start.sh
+          runas: root
