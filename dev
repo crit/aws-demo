@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export DB_DSN="root@tcp(localhost:3306)/aws-demo?charset=utf8&parseTime=true"
+export DB_LOGGING="on"
+export MEMCACHE=""
+export TEMPLATES="$PWD/templates"
+
+open http://localhost:3000
+
+gin

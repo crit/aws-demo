@@ -5,16 +5,18 @@ import (
 	"github.com/martini-contrib/render"
 	"github.com/polds/MyIP"
 	"net/http"
+	"os"
 )
 
 func main() {
 	m := martini.Classic()
 
-	m.Use(render.Renderer(render.Options{
-		Directory:  "templates",
-		Extensions: []string{".html"},
-		Layout:     "layout",
-	}))
+	opts := render.Options{}
+	opts.Directory = os.Getenv("TEMPLATES")
+	opts.Extensions = []string{".html"}
+	opts.Layout = "layout"
+
+	m.Use(render.Renderer(opts))
 
 	storer.InitDb()
 	cacher.InitCache()
