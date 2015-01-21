@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/crit/critical-go/cacher"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/polds/MyIP"
@@ -19,7 +20,12 @@ func main() {
 	m.Use(render.Renderer(opts))
 
 	storer.InitDb()
-	cacher.InitCache()
+	MigratePerson()
+
+	cacher.InitCache(cacher.Options{
+		Hosts:  os.Getenv("MEMCACHE"),
+		Engine: cacher.MEMCACHE,
+	})
 
 	m.Use(storageCheck())
 

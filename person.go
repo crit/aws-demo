@@ -3,19 +3,33 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/crit/critical-go/cacher"
+	"log"
 	"net/mail"
 	"time"
 )
 
 type Person struct {
 	Id    int       `json:"-"`
-	Name  string    `json:"name"`
-	Email string    `json:"-"`
-	Date  time.Time `json:"date"`
+	Name  string    `json:"name" sql:"not null;unique"`
+	Email string    `json:"-"  sql:"not null"`
+	Date  time.Time `json:"date"  sql:"not null;DEFAULT:current_timestamp"`
 }
 
 func (Person) TableName() string {
 	return "people"
+}
+
+func MigratePerson() {
+	if db.HasTable("people") {
+		return
+	}
+
+	err := db.AutoMigrate(&Person{}).Error
+
+	if err != nil {
+		log.Println(err.Error())
+	}
 }
 
 func PersonList() []Person {
