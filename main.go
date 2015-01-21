@@ -46,6 +46,15 @@ func main() {
 
 	})
 
+	m.Get("/pwd", func() string {
+		dir, _ := os.Getwd()
+		return dir
+	})
+
+	m.Get("/templates", func() string {
+		return os.Getenv("TEMPLATES")
+	})
+
 	m.NotFound(func(out render.Render) {
 		out.HTML(404, "404", nil)
 	})
