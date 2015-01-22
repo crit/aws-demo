@@ -38,6 +38,8 @@
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 		<script>
 			(function($){
+				"use strict";
+
 				var timer = {
 					init: 0,
 					duration: 0,
@@ -49,7 +51,7 @@
 					}
 				};
 
-				var restartButton = $("<button>").addClass("btn btn-primary").text("restart").on("click", function(e){
+				var restartButton = $("<button>").addClass("btn btn-primary").text("restart").on("click", function(){
 					current();
 					$(this).parent().removeClass("bg-danger");
 					$(this).remove();
@@ -58,7 +60,7 @@
 				var emptyList = $("<li>").addClass("list-group-item").text("You will be the first!");
 
 				function current() {
-					timer.start()
+					timer.start();
 
 					$.ajax({
 						url: "/api/people",
@@ -73,50 +75,49 @@
 
 					if (res.status != 200) {
 						$("#timer").text("-").parent().parent().addClass("bg-danger").append(restartButton);
-						return
+						return;
 					}
 
 					data = res.responseJSON;
 
 					if (!data || !data.hasOwnProperty("people")) {
 						$("#timer").text("-").parent().parent().addClass("bg-danger").append(res.responseText);
-						return
+						return;
 					}
 
 					$.each(data.people, function(i, item){
-						var date = new Date(item.date)
+						var date = new Date(item.date);
 						var formatted = $("<span>").addClass("pull-right small").text(date.toLocaleString());
-						var el = $("<li>").addClass('list-group-item').html([item.name, formatted]);
-						content.push(el)
+						var el = $("<li>").addClass("list-group-item").html([item.name, formatted]);
+						content.push(el);
 					});
 
 					if (content.length > 0) $("#stage").html(content);
-					if (content.length == 0) $("#stage").html(emptyList);
+					if (content.length === 0) $("#stage").html(emptyList);
 					$("#timer").text(timer.duration);
 
 					setTimeout(current, 2000);
 				}
 
-				function submit(e) {
-					e.preventDefault();
-					$("#error").addClass("hidden")
+				function submit(el) {
+					var form = $(el);
 
-					$form = $(this)
+					$("#error").addClass("hidden");
 
 					$.ajax({
 						url: "/api/people",
 						method: "put",
-						data: $form.serialize()
+						data: form.serialize()
 					}).complete(function(res){
-						$form[0].reset();
+						form[0].reset();
 						$("input:first").focus();
 						if (res.status != 201) $("#error-msg").text(res.responseText).parent().removeClass("hidden");
 					});
 				}
 
-				// on dom load bind stuff and start the loop
+				// on dom load; bind stuff and start the loop
 				$(function(){
-					$("form").on("submit", submit);
+					$("form").on("submit", function(e){ e.preventDefault(); submit(this); });
 					$("#error button").on("click", function(){
 						$("#error").addClass("hidden");
 					});
@@ -124,7 +125,7 @@
 					$("input:first").focus();
 					current();
 				});
-			}(jQuery));
+			}(window.jQuery));
 		</script>
 	</body>
 </html>
