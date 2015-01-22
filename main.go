@@ -60,6 +60,10 @@ func main() {
 	m.Get("/templates", func() string {
 		return os.Getenv("TEMPLATES")
 	})
+	
+	m.Get("/hosts", func() string {
+		return os.Getenv("MEMCACHE")
+	})
 
 	m.NotFound(func(out render.Render) {
 		out.HTML(404, "404", nil)
