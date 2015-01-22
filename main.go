@@ -65,6 +65,10 @@ func main() {
 		return os.Getenv("MEMCACHE")
 	})
 
+	m.Get("/env", func(r render.Render) {
+		r.JSON(200, os.Environ())	
+	})
+
 	m.NotFound(func(out render.Render) {
 		out.HTML(404, "404", nil)
 	})
