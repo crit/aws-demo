@@ -5,6 +5,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/polds/MyIP"
+	"html"
 	"net/http"
 	"os"
 )
@@ -40,7 +41,8 @@ func main() {
 		})
 
 		m.Put("/people", func(out render.Render, req *http.Request) {
-			name, email := req.FormValue("name"), req.FormValue("email")
+			name := html.EscapeString(req.FormValue("name"))
+			email := html.EscapeString(req.FormValue("email"))
 
 			if err := PersonCreate(name, email); err != nil {
 				out.JSON(500, err.Error())
