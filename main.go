@@ -13,7 +13,7 @@ func main() {
 	m := martini.Classic()
 
 	m.Use(render.Renderer(render.Options{
-		Directory:  "templates",
+		Directory:  os.Getenv("TEMPLATES"),
 		Extensions: []string{".html"},
 		Layout:     "layout",
 	}))
