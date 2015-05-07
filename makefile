@@ -5,7 +5,7 @@ default: run
 .PHONY: default run
 
 run:
-				./dev
+				./env
 
 test:
 				go test ./...

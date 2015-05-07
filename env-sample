@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# Copy this file using the filename "env"
 export DB_DSN="root@tcp(localhost:3306)/aws-demo?charset=utf8&parseTime=true"
 export DB_LOGGING="on"
 export MEMCACHE=""
