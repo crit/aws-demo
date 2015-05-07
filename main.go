@@ -1,13 +1,14 @@
 package main
 
 import (
+	"html"
+	"net/http"
+	"os"
+
 	"github.com/crit/critical-go/cacher"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/polds/MyIP"
-	"html"
-	"net/http"
-	"os"
 )
 
 func main() {
@@ -34,22 +35,19 @@ func main() {
 		out.HTML(200, "index", ip)
 	})
 
-	m.Group("/api", func(m martini.Router) {
+	m.Get("/api/people", func(out render.Render) {
+		out.JSON(200, map[string][]Person{"people": PersonList()})
+	})
 
-		m.Get("/people", func(out render.Render) {
-			out.JSON(200, map[string][]Person{"people": PersonList()})
-		})
+	m.Put("/api/people", func(out render.Render, req *http.Request) {
+		name := html.EscapeString(req.FormValue("name"))
+		email := html.EscapeString(req.FormValue("email"))
 
-		m.Put("/people", func(out render.Render, req *http.Request) {
-			name := html.EscapeString(req.FormValue("name"))
-			email := html.EscapeString(req.FormValue("email"))
-
-			if err := PersonCreate(name, email); err != nil {
-				out.JSON(500, err.Error())
-			} else {
-				out.Status(201)
-			}
-		})
+		if err := PersonCreate(name, email); err != nil {
+			out.JSON(500, err.Error())
+		} else {
+			out.Status(201)
+		}
 	})
 
 	m.NotFound(func(out render.Render) {

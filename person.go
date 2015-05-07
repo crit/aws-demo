@@ -3,12 +3,14 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"github.com/crit/critical-go/cacher"
 	"log"
 	"net/mail"
 	"time"
+
+	"github.com/crit/critical-go/cacher"
 )
 
+// Person represents a registrant.
 type Person struct {
 	Id    int       `json:"-"`
 	Name  string    `json:"name" sql:"not null;unique"`
@@ -37,7 +39,7 @@ func PersonList() []Person {
 
 	cache := cacher.Get("people")
 
-	if err := json.Unmarshal([]byte(cache), &list); cache != "" && err == nil {
+	if err := json.Unmarshal(cache, &list); len(cache) > 0 && err == nil {
 		return list
 	}
 
@@ -45,7 +47,7 @@ func PersonList() []Person {
 
 	if len(list) > 0 {
 		data, _ := json.Marshal(list)
-		cacher.Set("people", string(data))
+		cacher.Set("people", data)
 	}
 
 	return list
