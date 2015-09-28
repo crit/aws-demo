@@ -7,8 +7,10 @@ import (
 	"net/mail"
 	"time"
 
-	"github.com/crit/critical-go/cacher"
+	"github.com/crit/critical-go/storage"
 )
+
+var cache = storage.Local()
 
 // Person represents a registrant.
 type Person struct {
@@ -37,9 +39,9 @@ func MigratePerson() {
 func PersonList() []Person {
 	list := make([]Person, 0)
 
-	cache := cacher.Get("people")
+	data := cache.Get("people")
 
-	if err := json.Unmarshal(cache, &list); len(cache) > 0 && err == nil {
+	if err := json.Unmarshal(data, &list); len(data) > 0 && err == nil {
 		return list
 	}
 
@@ -47,7 +49,7 @@ func PersonList() []Person {
 
 	if len(list) > 0 {
 		data, _ := json.Marshal(list)
-		cacher.Set("people", data)
+		cache.Put("people", data)
 	}
 
 	return list
@@ -66,7 +68,7 @@ func PersonCreate(name, email string) error {
 	err := db.Create(&person).Error
 
 	if err == nil {
-		cacher.Delete("people")
+		cache.Delete("people")
 	}
 
 	return err
